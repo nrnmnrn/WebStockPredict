@@ -5,25 +5,47 @@ import requests
 from datetime import datetime,timedelta
 
 def get_domestic_stock(sticker_code, start_date, end_date):
-    # 从网易接口获取数据
-    api_adr = 'http://quotes.money.163.com/service/chddata.html'
-    fields = "TOPEN;TCLOSE;HIGH;LOW;VOTURNOVER"
-    # 注意：获取上海证券与深圳证券股票的数据，需要构造不同的URL
-    tag = "0"       # 上海证券
-    if sticker_code in ['000063','000066','000768','000651']:
-        tag = "1"   # 深圳证券
+    # # 从网易接口获取数据
+    # api_adr = 'http://quotes.money.163.com/service/chddata.html'
+    # fields = "TOPEN;TCLOSE;HIGH;LOW;VOTURNOVER"
+    # # 注意：获取上海证券与深圳证券股票的数据，需要构造不同的URL
+    # tag = "0"       # 上海证券
+    # if sticker_code in ['000063','000066','000768','000651']:
+    #     tag = "1"   # 深圳证券
 
-    params = {'code': tag + sticker_code, 'start': start_date, 'end': end_date, 'fields': fields}
-    r = requests.get(api_adr, params=params)
+    # params = {'code': tag + sticker_code, 'start': start_date, 'end': end_date, 'fields': fields}
+    # r = requests.get(api_adr, params=params)
 
-    print(r.url)
-    txt_list = r.text.split('\n')   # r.content二进制数据    r.text 文本数据
-    txt_list.reverse()
-    txt_list[0] = txt_list[-1]  # 列名替换开头的空字符
-    col_name = "Date,Code,Name,Open,Close,High,Low,Volume\n"
-    txt_list[0] = col_name
-    txt_list.pop(-1)
+    # print(r.url)
+    # txt_list = r.text.split('\n')   # r.content二进制数据    r.text 文本数据
+    # txt_list.reverse()
+    # txt_list[0] = txt_list[-1]  # 列名替换开头的空字符
+    # col_name = "Date,Code,Name,Open,Close,High,Low,Volume\n"
+    # txt_list[0] = col_name
+    # txt_list.pop(-1)
+    Date = '20230901'
 
+    html = requests.get('https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=%s&stockNo=%s' % (Date, sticker_code))
+    content = json.loads(html.text)
+    Name = content['title']
+    stock_data = content['data']
+    col_name = content['fields']
+
+    df = pd.DataFrame(data=stock_data, columns=col_name)
+    df = df.rename(columns={
+        "日期": "Date",
+        "成交股數": "Volume",
+        "成交金額": "Turnover",
+        "開盤價": "Open",
+        "最高價": "High",
+        "最低價": "Low",
+        "收盤價": "Close",
+        "漲跌價差": "Price Change",
+        "成交筆數": "Transactions"
+    })
+    df["Name"] = "元大台灣50"
+    df["Code"] = "0050"
+    df = df[["Date", "Code", "Name", "Open", "Close", "High", "Low", "Volume"]]
     root = os.path.dirname(os.path.dirname(__file__))
     dir_path = os.path.join(root,"data")
     filename = sticker_code + ".csv"
