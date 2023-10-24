@@ -5,7 +5,7 @@ import requests
 import pandas as pd
 from datetime import datetime,timedelta
 
-def get_domestic_stock(sticker_code, current_date):
+def get_domestic_stock(sticker_code):
     # # 从网易接口获取数据
     # api_adr = 'http://quotes.money.163.com/service/chddata.html'
     # fields = "TOPEN;TCLOSE;HIGH;LOW;VOTURNOVER"
@@ -24,6 +24,7 @@ def get_domestic_stock(sticker_code, current_date):
     # col_name = "Date,Code,Name,Open,Close,High,Low,Volume\n"
     # txt_list[0] = col_name
     # txt_list.pop(-1)
+    current_date = datetime.now()
     first_day_of_current_month = current_date.replace(day=1)
 
     last_month = current_date - timedelta(days=current_date.day)
@@ -32,7 +33,7 @@ def get_domestic_stock(sticker_code, current_date):
     current_month_date = first_day_of_current_month.strftime("%Y%m%d")
     last_month_date = first_day_of_last_month.strftime("%Y%m%d")
 
-    html = requests.get('https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=%s&stockNo=%s' % (last_month_date, Code))
+    html = requests.get('https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=%s&stockNo=%s' % (last_month_date, sticker_code))
     content = json.loads(html.text)
     Name = content['title']
     stock_data = content['data']
@@ -53,7 +54,7 @@ def get_domestic_stock(sticker_code, current_date):
     last_month_df["Code"] = "0050"
     last_month_df = last_month_df[["Date", "Code", "Name", "Open", "Close", "High", "Low", "Volume"]]
 
-    html = requests.get('https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=%s&stockNo=%s' % (current_month_date, Code))
+    html = requests.get('https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=%s&stockNo=%s' % (current_month_date, sticker_code))
     content = json.loads(html.text)
     Name = content['title']
     stock_data = content['data']
@@ -80,7 +81,10 @@ def get_domestic_stock(sticker_code, current_date):
     dir_path = os.path.join(root,"data")
     filename = sticker_code + ".csv"
     print(os.path.join(dir_path,filename))
-    current_month_AND_last_month_df.to_csv(filename, index=False)
+    file_path = root+"/data/"+filename
+    print(file_path+"------------------------------")
+    current_month_AND_last_month_df.to_csv(file_path, index = False)
+    print("2")
     # with open(os.path.join(dir_path,filename), "w+", encoding='utf-8') as f:
     #     for line in txt_list:
     #         if line.split(',')[3] != '0.0':     # 去除无效数据
@@ -101,7 +105,7 @@ def get_all_last_data(start_date): # 得到从start_date至今日 所有最新�
     end_date = cur.strftime("%Y-%m-%d")  # 获取今年最新数据
 
     for code, company_name in companies.items():
-        get_domestic_stock(code, start_date, end_date)
+        get_domestic_stock(code)
 
 def get_single_last_data(stock_code,start_date="2010-01-01"):
     # start_date = '2010-06-21'  # 只能按整年获取至今日数据
@@ -110,7 +114,7 @@ def get_single_last_data(stock_code,start_date="2010-01-01"):
     cur = cur + year  # 在当前日期上加一年
     end_date = cur.strftime("%Y-%m-%d")  # 获取今年最新数据
 
-    get_domestic_stock(stock_code, start_date, end_date)
+    get_domestic_stock(stock_code)
 
 
 if __name__ == '__main__':

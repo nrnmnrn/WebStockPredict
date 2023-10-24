@@ -87,9 +87,12 @@ def get_stock_index(stock_code):
 
 
 def home(request):
-    recent_data,predict_data = get_hist_predict_data("600718")
-    data = {"recent_data":recent_data,"stock_code":"600718","predict_data":predict_data}
-    data['indexs'] = get_stock_index("600718")
+    print("0")
+    recent_data,predict_data = get_hist_predict_data("0050")
+    print("1")
+    data = {"recent_data":recent_data,"stock_code":"0050","predict_data":predict_data}
+    data['indexs'] = get_stock_index("0050")
+    print("2")
     return render(request,"stock_predict/home.html",{"data":json.dumps(data)}) # json.dumps(list)
 
 def predict_stock_action(request):
