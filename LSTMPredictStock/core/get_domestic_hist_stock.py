@@ -2,9 +2,10 @@
 import json
 import os
 import requests
+import pandas as pd
 from datetime import datetime,timedelta
 
-def get_domestic_stock(sticker_code, start_date, end_date):
+def get_domestic_stock(sticker_code, current_date):
     # # 从网易接口获取数据
     # api_adr = 'http://quotes.money.163.com/service/chddata.html'
     # fields = "TOPEN;TCLOSE;HIGH;LOW;VOTURNOVER"
@@ -23,16 +24,21 @@ def get_domestic_stock(sticker_code, start_date, end_date):
     # col_name = "Date,Code,Name,Open,Close,High,Low,Volume\n"
     # txt_list[0] = col_name
     # txt_list.pop(-1)
-    Date = '20230901'
+    first_day_of_current_month = current_date.replace(day=1)
 
-    html = requests.get('https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=%s&stockNo=%s' % (Date, sticker_code))
+    last_month = current_date - timedelta(days=current_date.day)
+    first_day_of_last_month = last_month.replace(day=1)
+
+    current_month_date = first_day_of_current_month.strftime("%Y%m%d")
+    last_month_date = first_day_of_last_month.strftime("%Y%m%d")
+
+    html = requests.get('https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=%s&stockNo=%s' % (last_month_date, Code))
     content = json.loads(html.text)
     Name = content['title']
     stock_data = content['data']
     col_name = content['fields']
-
-    df = pd.DataFrame(data=stock_data, columns=col_name)
-    df = df.rename(columns={
+    last_month_df = pd.DataFrame(data=stock_data, columns=col_name)
+    last_month_df = last_month_df.rename(columns={
         "日期": "Date",
         "成交股數": "Volume",
         "成交金額": "Turnover",
@@ -43,17 +49,42 @@ def get_domestic_stock(sticker_code, start_date, end_date):
         "漲跌價差": "Price Change",
         "成交筆數": "Transactions"
     })
-    df["Name"] = "元大台灣50"
-    df["Code"] = "0050"
-    df = df[["Date", "Code", "Name", "Open", "Close", "High", "Low", "Volume"]]
+    last_month_df["Name"] = "元大台灣50"
+    last_month_df["Code"] = "0050"
+    last_month_df = last_month_df[["Date", "Code", "Name", "Open", "Close", "High", "Low", "Volume"]]
+
+    html = requests.get('https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=%s&stockNo=%s' % (current_month_date, Code))
+    content = json.loads(html.text)
+    Name = content['title']
+    stock_data = content['data']
+    col_name = content['fields']
+    current_month_df = pd.DataFrame(data=stock_data, columns=col_name)
+    current_month_df = current_month_df.rename(columns={
+        "日期": "Date",
+        "成交股數": "Volume",
+        "成交金額": "Turnover",
+        "開盤價": "Open",
+        "最高價": "High",
+        "最低價": "Low",
+        "收盤價": "Close",
+        "漲跌價差": "Price Change",
+        "成交筆數": "Transactions"
+    })
+    current_month_df["Name"] = "元大台灣50"
+    current_month_df["Code"] = "0050"
+    current_month_df = current_month_df[["Date", "Code", "Name", "Open", "Close", "High", "Low", "Volume"]]
+
+    current_month_AND_last_month_df = pd.concat([current_month_df, last_month_df])
+
     root = os.path.dirname(os.path.dirname(__file__))
     dir_path = os.path.join(root,"data")
     filename = sticker_code + ".csv"
     print(os.path.join(dir_path,filename))
-    with open(os.path.join(dir_path,filename), "w+", encoding='utf-8') as f:
-        for line in txt_list:
-            if line.split(',')[3] != '0.0':     # 去除无效数据
-                f.write(line)
+    current_month_AND_last_month_df.to_csv(filename, index=False)
+    # with open(os.path.join(dir_path,filename), "w+", encoding='utf-8') as f:
+    #     for line in txt_list:
+    #         if line.split(',')[3] != '0.0':     # 去除无效数据
+    #             f.write(line)
 
 
 def get_all_last_data(start_date): # 得到从start_date至今日 所有最新数据
