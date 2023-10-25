@@ -27,12 +27,16 @@ class DataLoader():
 		load data, otherwise reduce size of the training split.
 		'''
 		data_windows = []
+		print("-----------------------")
+		print(self.len_test)
+		print(seq_len)
 		for i in range(self.len_test - seq_len):
+			
 			data_windows.append(self.data_test[i:i+seq_len])	#每一个元素是长度为seq_len的 list即一个window
 
 		data_windows = np.array(data_windows).astype(float)
 		data_windows = self.normalise_windows(data_windows, single_window=False) if normalise else data_windows
-
+		
 		x = data_windows[:, :-1]
 		y = data_windows[:, -1, [0]]
 
@@ -75,7 +79,7 @@ class DataLoader():
 		window = self.normalise_windows(window, single_window=True)[0] if normalise else window
 		x = window[:-1]
 		y = window[-1, [0]]  # 最后一行的 0个元素 组成array类型，若是[0,2]则取第0个和第2个元素组成array，[-1, 0]：则是取最后一行第0个元素，
-        # 只返回该元素的值[]和()用于索引都是切片操作，所以这里的y即label是 第一列Close列
+		# 只返回该元素的值[]和()用于索引都是切片操作，所以这里的y即label是 第一列Close列
 		return x, y
 
 	def normalise_windows(self, window_data, single_window=False):

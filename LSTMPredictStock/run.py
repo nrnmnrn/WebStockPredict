@@ -258,3 +258,4 @@ if __name__ == '__main__':
     # train_all_stock()
     predict_all_stock()
     # train_model("000063", predict=False)
+get_hist_data

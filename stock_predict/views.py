@@ -17,7 +17,6 @@ def get_hist_predict_data(stock_code):
     recent_data,predict_data = None,None
     # company = models.Company.objects.get(stock_code=stock_code)
     company = get_object_or_404(Company, stock_code=stock_code)
-
     if company.historydata_set.count() <= 0:
         history_data = models.HistoryData()
         history_data.company = company
@@ -87,12 +86,9 @@ def get_stock_index(stock_code):
 
 
 def home(request):
-    print("0")
     recent_data,predict_data = get_hist_predict_data("0050")
-    print("1")
     data = {"recent_data":recent_data,"stock_code":"0050","predict_data":predict_data}
     data['indexs'] = get_stock_index("0050")
-    print("2")
     return render(request,"stock_predict/home.html",{"data":json.dumps(data)}) # json.dumps(list)
 
 def predict_stock_action(request):

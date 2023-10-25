@@ -76,15 +76,28 @@ def get_domestic_stock(sticker_code):
     current_month_df = current_month_df[["Date", "Code", "Name", "Open", "Close", "High", "Low", "Volume"]]
 
     current_month_AND_last_month_df = pd.concat([current_month_df, last_month_df])
-
+    #轉換Date格式。原本的為112/10/02轉成20231002
+    def convert_date(date_str):
+        parts = date_str.split('/')
+        year = str(int(parts[0]) + 1911)
+        formatted_date = year + '-' + parts[1] + '-' + parts[2]
+        return formatted_date
+    def convert_code(code_int):
+        formated_code = "'"+str(code_int)
+        return formated_code
+    def convert_volume(volume_str):
+        formated_volume = int(volume_str.replace(",", ""))
+        return formated_volume
+    current_month_AND_last_month_df['Date'] = current_month_AND_last_month_df['Date'].apply(convert_date)
+    current_month_AND_last_month_df['Code'] = current_month_AND_last_month_df['Code'].apply(convert_code)
+    current_month_AND_last_month_df['Volume'] = current_month_AND_last_month_df['Volume'].apply(convert_volume)
+    
     root = os.path.dirname(os.path.dirname(__file__))
     dir_path = os.path.join(root,"data")
     filename = sticker_code + ".csv"
-    print(os.path.join(dir_path,filename))
+    # print(os.path.join(dir_path,filename))
     file_path = root+"/data/"+filename
-    print(file_path+"------------------------------")
     current_month_AND_last_month_df.to_csv(file_path, index = False)
-    print("2")
     # with open(os.path.join(dir_path,filename), "w+", encoding='utf-8') as f:
     #     for line in txt_list:
     #         if line.split(',')[3] != '0.0':     # 去除无效数据
