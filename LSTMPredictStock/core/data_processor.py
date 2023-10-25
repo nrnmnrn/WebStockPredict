@@ -27,9 +27,6 @@ class DataLoader():
 		load data, otherwise reduce size of the training split.
 		'''
 		data_windows = []
-		print("-----------------------")
-		print(self.len_test)
-		print(seq_len)
 		for i in range(self.len_test - seq_len):
 			
 			data_windows.append(self.data_test[i:i+seq_len])	#每一个元素是长度为seq_len的 list即一个window
