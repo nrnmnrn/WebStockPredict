@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>股票预测系统</title>
+    <title>股票預測系統</title>
     {% load static %}
     <script src="{% static 'stock_predict/js/echarts.min.js' %}"></script>
 </head>
@@ -20,7 +20,7 @@
         console.log(stock_data);
 </script>
 <center>
-    <h1>股票预测系统</h1>
+    <h1>股票預測系統</h1>
     <div style="position:center;margin-top: 50px">
         <form id="commit_stock_code" action="{% url 'stock_predict:predict' %}" method="post">
             {% csrf_token %}
@@ -35,6 +35,7 @@
                 <option id="601390" value="601390">中国中铁(601390)</option>
                 <option id="000768" value="000768">中航飞机(000768)</option>
                 <option id="000063" value="000063">中兴通讯(000063)</option>
+                <option id="0050" value="0050">台灣50(0050)</option>
             </select>
             <input type="submit" value="查询" style="padding:5px;">
         </form>

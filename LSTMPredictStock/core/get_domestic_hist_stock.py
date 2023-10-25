@@ -54,7 +54,6 @@ def get_domestic_stock(sticker_code):
         total_df = pd.concat([total_df, month_df])
         date_for_search_PRE -= timedelta(days=date_for_search_PRE.day)
         date_for_search_PRE = date_for_search_PRE.replace(day=25)
-        
 
     #轉換Date格式。原本的為112/10/02轉成20231002
     def convert_date(date_str):
@@ -71,7 +70,8 @@ def get_domestic_stock(sticker_code):
     total_df['Date'] = total_df['Date'].apply(convert_date)
     total_df['Code'] = total_df['Code'].apply(convert_code)
     total_df['Volume'] = total_df['Volume'].apply(convert_volume)
-    
+    total_df = total_df.sort_values(by='Date')
+
     root = os.path.dirname(os.path.dirname(__file__))
     # dir_path = os.path.join(root,"data")
     filename = sticker_code + ".csv"

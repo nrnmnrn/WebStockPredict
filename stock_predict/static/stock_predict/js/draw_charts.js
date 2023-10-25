@@ -1,6 +1,7 @@
 
 var companies = {"600718":"东软集团","000651":"格力电器","600839":"四川长虹","600320":"振华重工","601988":"中国银行",
-                 "000066": "中国长城","601766":"中国中车","601390":"中国中铁","000768":"中航飞机","000063":"中兴通讯"};
+                 "000066":"中国长城","601766":"中国中车","601390":"中国中铁","000768":"中航飞机","000063":"中兴通讯",
+                "0050":"台灣50"};
 
 function draw_chart(){
     //初始化echarts实例
@@ -9,7 +10,7 @@ function draw_chart(){
     // 指定图表的配置项和数据
      var option = {
         title: {
-                text: companies[stock_code]+"("+stock_code+")" + "过去20天历史数据以及未来10天预测数据",
+             text: companies[stock_code] + "(" + stock_code + ")" + "過去20天歷史數據以及未來10天預測數據",
                 textStyle:{
         　　　　  fontSize:15
                 }
@@ -19,7 +20,7 @@ function draw_chart(){
                 },
         legend: {
                 x : 'center',
-                data:['过去20天','未来10天']
+                data:['過去20天','未來10天']
             },
         //工具框，可以选择
         toolbox: {
@@ -45,7 +46,7 @@ function draw_chart(){
         ,
         series: [
             {
-            name:'过去20天',
+            name:'過去20天',
             type: 'line',
             color:['#FF0000'],
             data: [],   // x坐标对应y值
@@ -58,7 +59,7 @@ function draw_chart(){
                 },
             },
             {
-            name:'未来10天',
+            name:'未來10天',
             data: [],   // x坐标对应y值
             itemStyle : { normal: {label : {show: true}}},
             type: 'line',
@@ -113,8 +114,8 @@ function draw_radar(){
     var radar = echarts.init(document.getElementById('radar'));
     var option = {
         title : {
-            text: '近3个交易日综合评分',
-            subtext:'综合评分' + (indexs[0]['zong_he']/11.0*100).toFixed(1),
+            text: '近3個交易日綜合評分',
+            subtext:'綜合評分' + (indexs[0]['zong_he']/11.0*100).toFixed(1),
             subtextStyle : {
             color :'red',
             fontStyle :'normal',
@@ -145,19 +146,19 @@ function draw_radar(){
         polar : [
             {
                 indicator : [
-                    {text : '资金', max  : 11},
-                    {text : '强度', max  : 11},
-                    {text : '风险', max  : 11},
-                    {text : '转强', max  : 11},
-                    {text : '长预', max  : 11},
-                    {text : '近资', max  : 11}
+                    {text : '資金', max  : 11},
+                    {text : '強度', max  : 11},
+                    {text : '風險', max  : 11},
+                    {text : '轉強', max  : 11},
+                    {text : '長項', max  : 11},
+                    {text : '近資', max  : 11}
                 ],
                 radius : 130
             }
         ],
         series : [
             {
-                name: '各交易日数据对比',   //数据视图显示的标题
+                name: '各交易日數據對比',   //数据视图显示的标题
                 type: 'radar',
                 itemStyle: {
                     normal: {
