@@ -77,18 +77,19 @@ def get_stock_index(stock_code):
     获取股票的各项指标数据
     """
     company = get_object_or_404(Company, stock_code=stock_code)
-    if company.stockindex_set.count() <= 0:
-        # 将爬取的数据存入数据库
-        get_crawl_save_data()
+    #底下可以不用
+    # if company.stockindex_set.count() <= 0:
+    #     # 将爬取的数据存入数据库
+    #     get_crawl_save_data()
     # 从数据库获取近三天的数据
     indexs = company.stockindex_set.all().order_by('-ri_qi')[:3].values()
     return list(indexs)
 
 
 def home(request):
-    recent_data,predict_data = get_hist_predict_data("0050")
-    data = {"recent_data":recent_data,"stock_code":"0050","predict_data":predict_data}
-    data['indexs'] = get_stock_index("0050")
+    recent_data,predict_data = get_hist_predict_data("1101")
+    data = {"recent_data":recent_data,"stock_code":"1101","predict_data":predict_data}
+    data['indexs'] = get_stock_index("1101")
     return render(request,"stock_predict/home.html",{"data":json.dumps(data)}) # json.dumps(list)
 
 def predict_stock_action(request):

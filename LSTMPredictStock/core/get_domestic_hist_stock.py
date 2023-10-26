@@ -26,12 +26,12 @@ def get_domestic_stock(sticker_code):
     # txt_list.pop(-1)
     date_for_search_PRE = datetime.now()
     total_df = pd.DataFrame()
+    print(sticker_code+"---------------")
+
     for i in range(11):
         date_for_search = date_for_search_PRE.strftime('%Y%m%d')
-
         html = requests.get('https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=%s&stockNo=%s' % (date_for_search, sticker_code))
         content = json.loads(html.text)
-        Name = content['title']
         stock_data = content['data']
         col_name = content['fields']
         month_df = pd.DataFrame(data=stock_data, columns=col_name)
@@ -47,7 +47,7 @@ def get_domestic_stock(sticker_code):
             "成交筆數": "Transactions"
         })
         month_df["Name"] = content['title'].split(" ")[2] #回傳的這個位置為名稱
-        month_df["Code"] = "'" + str(sticker_code) #不知道為何原code前面要加'
+        month_df["Code"] = sticker_code
         month_df = month_df[["Date", "Code", "Name", "Open", "Close", "High", "Low", "Volume"]]
 
         total_df = pd.concat([total_df, month_df])
@@ -64,13 +64,22 @@ def get_domestic_stock(sticker_code):
     def convert_code(code_int):
         formated_code = "'"+str(code_int)
         return formated_code
-    #1,400 => 1400
-    def convert_volume(volume_str):
-        formated_volume = int(volume_str.replace(",", ""))
-        return formated_volume
+    #1,400 => 1400。查詢的api只要數值>=1000，就會從float變成str，如1,400
+    def parse_to_float(data):
+        if isinstance(data, str): #如果是字串格式，如"1,400.00"
+            data = float(data.replace(',', ''))
+            return data
+    def parse_to_int(data):
+        if isinstance(data, str): #如果是字串格式，如"1,400"
+            data = int(data.replace(',', ''))
+            return data
     total_df['Date'] = total_df['Date'].apply(convert_date)
     total_df['Code'] = total_df['Code'].apply(convert_code)
-    total_df['Volume'] = total_df['Volume'].apply(convert_volume)
+    total_df['Open'] = total_df['Open'].apply(parse_to_float)
+    total_df['Close'] = total_df['Close'].apply(parse_to_float)
+    total_df['High'] = total_df['High'].apply(parse_to_float)
+    total_df['Low'] = total_df['Low'].apply(parse_to_float)
+    total_df['Volume'] = total_df['Volume'].apply(parse_to_int) #Volume必須為整數
     total_df = total_df.sort_values(by='Date') #沒照順序擺放，讀取近20天的資料會有錯
 
     root = os.path.dirname(os.path.dirname(__file__))
