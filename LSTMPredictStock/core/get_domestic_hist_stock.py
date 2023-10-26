@@ -25,12 +25,11 @@ def get_domestic_stock(sticker_code):
     # txt_list[0] = col_name
     # txt_list.pop(-1)
     date_for_search_PRE = datetime.now()
-    Code = '0050'
     total_df = pd.DataFrame()
     for i in range(11):
         date_for_search = date_for_search_PRE.strftime('%Y%m%d')
 
-        html = requests.get('https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=%s&stockNo=%s' % (date_for_search, Code))
+        html = requests.get('https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=%s&stockNo=%s' % (date_for_search, sticker_code))
         content = json.loads(html.text)
         Name = content['title']
         stock_data = content['data']
@@ -47,8 +46,8 @@ def get_domestic_stock(sticker_code):
             "漲跌價差": "Price Change",
             "成交筆數": "Transactions"
         })
-        month_df["Name"] = "元大台灣50"
-        month_df["Code"] = "0050"
+        month_df["Name"] = content['title'].split(" ")[2] #回傳的這個位置為名稱
+        month_df["Code"] = "'" + str(sticker_code) #不知道為何原code前面要加'
         month_df = month_df[["Date", "Code", "Name", "Open", "Close", "High", "Low", "Volume"]]
 
         total_df = pd.concat([total_df, month_df])
@@ -61,16 +60,18 @@ def get_domestic_stock(sticker_code):
             year = str(int(parts[0]) + 1911)
             formatted_date = year + '-' + parts[1] + '-' + parts[2]
             return formatted_date
+    #原code不知為何每個數字前面都會加一個'
     def convert_code(code_int):
         formated_code = "'"+str(code_int)
         return formated_code
+    #1,400 => 1400
     def convert_volume(volume_str):
         formated_volume = int(volume_str.replace(",", ""))
         return formated_volume
     total_df['Date'] = total_df['Date'].apply(convert_date)
     total_df['Code'] = total_df['Code'].apply(convert_code)
     total_df['Volume'] = total_df['Volume'].apply(convert_volume)
-    total_df = total_df.sort_values(by='Date')
+    total_df = total_df.sort_values(by='Date') #沒照順序擺放，讀取近20天的資料會有錯
 
     root = os.path.dirname(os.path.dirname(__file__))
     # dir_path = os.path.join(root,"data")

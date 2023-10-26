@@ -115,7 +115,7 @@ def prediction(stock_code, real=True, pre_len=30, plot=False):
         configs['data']['columns']
     )
 
-    file_path = os.path.join(get_parent_dir(),os.path.join("saved_models",stock_code + ".h5"))
+    file_path = os.path.join(get_parent_dir(),os.path.join("saved_models","total.h5")) #
     model = Model()
     keras.backend.clear_session()
     model.load_model(file_path)  # 根据配置文件新建模型
