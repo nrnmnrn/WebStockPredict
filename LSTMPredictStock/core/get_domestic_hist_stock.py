@@ -26,7 +26,6 @@ def get_domestic_stock(sticker_code):
     # txt_list.pop(-1)
     date_for_search_PRE = datetime.now()
     total_df = pd.DataFrame()
-    print(sticker_code+"---------------")
 
     for i in range(11):
         date_for_search = date_for_search_PRE.strftime('%Y%m%d')
