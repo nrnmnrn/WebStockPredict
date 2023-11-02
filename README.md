@@ -1,4 +1,8 @@
 # WebStockPredict
+## *修改內容
+原本的中國10家公司全部替換成台灣前50家上市公司，且資料來源API從http://quotes.money.163.com/service/chddata.html 改成https://www.twse.com.tw/zh/trading/historical/stock-day.html ，讀取API傳回來資料的方式也做替換
+
+---
 此project是基于django的web app。它能给出指定范围内公司(此处为10个)的历史股票数据与未来某段时间的预测数据以及对该股票的一些评价指标。
 股票预测模型是使用[jaungiers](https://github.com/jaungiers/LSTM-Neural-Network-for-Time-Series-Prediction)提出的一种LSTM Neural Network模型。
 并使用以tensorflow作为backend的keras来搭建、训练模型。
@@ -43,7 +47,7 @@ Django version 2.1.4, using settings 'WebStockPredict.settings'
 Starting development server at http://127.0.0.1:8000/
 Quit the server with CTRL-BREAK.
 ```
-此时在浏览器中输入：`http://http://127.0.0.1:8000/stock_predict/home/`即可访问应用，通过下拉框选择查看某个公司过去20天的历史股票数据和未来10天的预测数据。
+此时在浏览器中输入：`http://127.0.0.1:8000/stock_predict/home/`即可访问应用，通过下拉框选择查看某个公司过去20天的历史股票数据和未来10天的预测数据。
 ![home page](/display_img/home.png "股票预测系统首页")
 
 **注：在Web app中绘制的10天预测数据，大多都是朝着一个方向变化。这是因为股票数据是一个随机过程，无法使用既有的模型去准确预测未来一段时间的数据，只能给出股票未来变化的趋势。
