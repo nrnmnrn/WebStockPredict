@@ -1,94 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>股票預測系統</title>
     {% load static %}
     <script src="{% static 'stock_predict/js/echarts.min.js' %}"></script>
 </head>
+
 <body>
-<script type="text/javascript">
+    <script type="text/javascript">
         var stock_data = null
         {% if data %}
-            stock_data = {{data|safe}};
-            var recent_data = stock_data['recent_data'];
-            var stock_code = stock_data['stock_code'];
-            var predict_data = stock_data['predict_data'];
-            var indexs = null;
-            indexs = stock_data['indexs']
+        stock_data = {{ data | safe }};
+        var recent_data = stock_data['recent_data'];
+        var stock_code = stock_data['stock_code'];
+        var predict_data = stock_data['predict_data'];
+        var indexs = null;
+        indexs = stock_data['indexs']
         {% endif %}
         console.log(stock_data);
-</script>
-<center>
-    <h1>股票預測系統</h1>
-    <div style="position:center;margin-top: 50px">
-        <form id="commit_stock_code" action="{% url 'stock_predict:predict' %}" method="post">
-            {% csrf_token %}
-            <select name="stock_code" style="width: 200px; text-align: center; padding:5px;">
-                <option id="1101" value="1101">台　泥(1101)</option>
-                <option id="1216" value="1216">統　一(1216)</option>
-                <option id="1301" value="1301">台　塑(1301)</option>
-                <option id="1303" value="1303">南　亞(1303)</option>
-                <option id="1326" value="1326">台　化(1326)</option>
-                <option id="1590" value="1590">亞德客-KY(1590)</option>
-                <option id="2002" value="2002">中　鋼(2002)</option>
-                <option id="2207" value="2207">和泰車(2207)</option>
-                <option id="2301" value="2301">光寶科(2301)</option>
-                <option id="2303" value="2303">聯　電(2303)</option>
-                
-                <option id="2308" value="2308">台達電(2308)</option>
-                <option id="2317" value="2317">鴻　海(2317)</option>
-                <option id="2327" value="2327">國　巨(2327)</option>
-                <option id="2330" value="2330">台積電(2330)</option>
-                <option id="2345" value="2345">智　邦(2345)</option>
-                <option id="2352" value="2352">佳世達(2352)</option>
-                <option id="2357" value="2357">華　碩(2357)</option>
-                <option id="2379" value="2379">瑞　昱(2379)</option>
-                <option id="2382" value="2382">廣　達(2382)</option>
-                <option id="2395" value="2395">研　華(2395)</option>
-                <option id="2408" value="2408">南亞科(2408)</option>
-                <option id="2412" value="2412">中華電(2412)</option>
-                <option id="2454" value="2454">聯發科(2454)</option>
-                <option id="2603" value="2603">長　榮(2603)</option>
-                <option id="2610" value="2610">華　航(2610)</option>
-                <option id="2801" value="2801">彰　銀(2801)</option>
-                <option id="2880" value="2880">華南金(2880)</option>
-                <option id="2881" value="2881">富邦金(2881)</option>
-                <option id="2882" value="2882">國泰金(2882)</option>
-                
-                <option id="2883" value="2883">開發金(2883)</option>
-                <option id="2884" value="2884">玉山金(2884)</option>
-                <option id="2885" value="2885">元大金(2885)</option>
-                <option id="2886" value="2886">兆豐金(2886)</option>
-                <option id="2887" value="2887">台新金(2887)</option>
-                <option id="2890" value="2890">永豐金(2890)</option>
-                <option id="2891" value="2891">中信金(2891)</option>
-                <option id="2892" value="2892">第一金(2892)</option>
-                <option id="2912" value="2912">統一超(2912)</option>
-                <option id="3008" value="3008">大立光(3008)</option>
-                <option id="3034" value="3034">聯　詠(3034)</option>
-                <option id="3037" value="3037">欣　興(3037)</option>
-                <option id="3045" value="3045">台灣大(3045)</option>
-                <option id="3231" value="3231">緯　創(3231)</option>
-                <option id="3711" value="3711">日月光投控(3711)</option>
-                <option id="4904" value="4904">遠　傳(4904)</option>
-                <option id="4938" value="4938">和　碩(4938)</option>
-                <option id="5871" value="5871">中租-KY(5871)</option>
-                <option id="5876" value="5876">上海商銀(5876)</option>
-                <option id="5880" value="5880">合庫金(5880)</option>
-                <option id="6505" value="6505">台塑化(6505)</option>
-                <option id="6669" value="6669">緯　穎(6669)</option>
-                <option id="9910" value="9910">豐　泰(9910)</option>                
-            </select>
-            <input type="submit" value="查询" style="padding:5px;">
-        </form>
-    </div>
-    <!-- 为ECharts准备一个具备大小（宽高）的容器 -->
-    <div style="width:100%;height:400px;margin-top:50px;">
-        <div id="hist_futu" style="float:left;width: 100%;height:450px;"></div>
-        <div id="radar" style="width:50%;height:600px;"></div>
-    </div>
-</center>
-<script src="{% static 'stock_predict/js/draw_charts.js' %}"></script>
+    </script>
+    <center>
+        <h1>股票預測系統</h1>
+        <div style="position:center;margin-top: 50px">
+            <form id="commit_stock_code" action="{% url 'stock_predict:predict' %}" method="post">
+                {% csrf_token %}
+                <input type="text" id="search_stock" placeholder="搜尋股票代碼"
+                    style="width: 200px; text-align: center; padding:5px;">
+                <select name="stock_code" style="width: 200px; text-align: center; padding:5px;" id="stock_code_select">
+                    <option value="1101">台　泥(1101)</option>
+                    <option value="1216">統　一(1216)</option>
+                    <option value="1301">台　塑(1301)</option>
+                    <option value="1303">南　亞(1303)</option>
+                    <option value="1326">台　化(1326)</option>
+                    <option value="1590">亞德客-KY(1590)</option>
+                    <option value="2002">中　鋼(2002)</option>
+                    <option value="2207">和泰車(2207)</option>
+                    <option value="2301">光寶科(2301)</option>
+                    <option value="2303">聯　電(2303)</option>
+                    <option value="2308">台達電(2308)</option>
+                    <option value="2317">鴻　海(2317)</option>
+                    <option value="2327">國　巨(2327)</option>
+                    <option value="2330">台積電(2330)</option>
+                    <option value="2345">智　邦(2345)</option>
+                    <option value="2352">佳世達(2352)</option>
+                    <option value="2357">華　碩(2357)</option>
+                    <option value="2379">瑞　昱(2379)</option>
+                    <option value="2382">廣　達(2382)</option>
+                    <option value="2395">研　華(2395)</option>
+                    <option value="2408">南亞科(2408)</option>
+                    <option value="2412">中華電(2412)</option>
+                    <option value="2454">聯發科(2454)</option>
+                    <option value="2603">長　榮(2603)</option>
+                    <option value="2610">華　航(2610)</option>
+                    <option value="2801">彰　銀(2801)</option>
+                    <option value="2880">華南金(2880)</option>
+                    <option value="2881">富邦金(2881)</option>
+                    <option value="2882">國泰金(2882)</option>
+                    <option value="2883">開發金(2883)</option>
+                    <option value="2884">玉山金(2884)</option>
+                    <option value="2885">元大金(2885)</option>
+                    <option value="2886">兆豐金(2886)</option>
+                    <option value="2887">台新金(2887)</option>
+                    <option value="2890">永豐金(2890)</option>
+                    <option value="2891">中信金(2891)</option>
+                    <option value="2892">第一金(2892)</option>
+                    <option value="2912">統一超(2912)</option>
+                    <option value="3008">大立光(3008)</option>
+                    <option value="3034">聯　詠(3034)</option>
+                    <option value="3037">欣　興(3037)</option>
+                    <option value="3045">台灣大(3045)</option>
+                    <option value="3231">緯　創(3231)</option>
+                    <option value="3711">日月光投控(3711)</option>
+                    <option value="4904">遠　傳(4904)</option>
+                    <option value="4938">和　碩(4938)</option>
+                    <option value="5871">中租-KY(5871)</option>
+                    <option value="5876">上海商銀(5876)</option>
+                    <option value="5880">合庫金(5880)</option>
+                    <option value="6505">台塑化(6505)</option>
+                    <option value="6669">緯　穎(6669)</option>
+                    <option value="9910">豐　泰(9910)</option>
+                </select>
+                <input type="submit" value="查詢" style="padding:5px;">
+            </form>
+        </div>
+        <div style="width:100%;height:400px;margin-top:50px;">
+            <div id="hist_futu" style="float:left;width: 100%;height:450px;"></div>
+            <div id="radar" style="width:50%;height:600px;"></div>
+        </div>
+    </center>
+    <script src="{% static 'stock_predict/js/draw_charts.js' %}"></script>
+    <script>
+        const searchInput = document.getElementById("search_stock");
+        const selectElement = document.getElementById("stock_code_select");
+        const originalOptions = Array.from(selectElement.options);
+
+        searchInput.addEventListener("input", function () {
+            const searchValue = searchInput.value.trim().toLowerCase();
+
+            selectElement.innerHTML = "";
+
+            for (let option of originalOptions) {
+                const text = option.textContent.toLowerCase();
+                if (text.includes(searchValue)) {
+                    selectElement.appendChild(option.cloneNode(true));
+                }
+            }
+        });
+    </script>
 </body>
+
 </html>
