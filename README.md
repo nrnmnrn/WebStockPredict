@@ -1,6 +1,6 @@
 # WebStockPredict
 ## *修改內容
-原本的中國10家公司全部替換成台灣前50家上市公司，且資料來源API從http://quotes.money.163.com/service/chddata.html 改成https://www.twse.com.tw/zh/trading/historical/stock-day.html ，讀取API傳回來資料的方式也做替換。每家公司使用的模型從各自個別的模型改成共同使用原本其中一家公司的模型。
+原本的中國10家公司全部替換成台灣前50家上市公司，且資料來源API從http://quotes.money.163.com/service/chddata.html 改成https://www.twse.com.tw/zh/trading/historical/stock-day.html ，讀取API傳回來資料的方式也做替換。每家公司使用的模型從各自個別的模型改成共同使用原本其中一家公司的模型。新增透過搜尋方式選取公司
 
 ---
 此project是基于django的web app。它能给出指定范围内公司(此处为10个)的历史股票数据与未来某段时间的预测数据以及对该股票的一些评价指标。
