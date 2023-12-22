@@ -71,7 +71,7 @@ function draw_chart(){
                 },
         legend: {
                 x : 'center',
-                data:['過去20天','未來10天']
+            data: ['過去20天', '未來10天','過去的預測']
             },
         //工具框，可以选择
         toolbox: {
@@ -122,15 +122,30 @@ function draw_chart(){
                 },
             color:['#0000FF'],
             },
+            {
+                name: '過去的預測',
+                data: [],   // x坐标对应y值
+                itemStyle: { normal: { label: { show: true } } },
+                type: 'line',
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'top'
+                    }
+                },
+                color: ['#000022'],
+            },
         ]
     };
 
     var min,max;
-    for(var k=0; k <= 1; k++){
+    for(var k=0; k <= 2; k++){
         if(k == 0){
             m_data = recent_data;
-        }else{
+        }else if(k==1){
             m_data = predict_data;
+        }else {
+            m_data = predict_data_2;
         }
         for(var i = 0 ; i < m_data.length; i++){
             var one_day = m_data[i];

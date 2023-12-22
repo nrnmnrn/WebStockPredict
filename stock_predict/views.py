@@ -5,16 +5,15 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from LSTMPredictStock import run
 from stock_predict import models
-from datetime import datetime as dt
+from datetime import timedelta, datetime as dt
 from apscheduler.scheduler import Scheduler
 from .models import Company
 
 import pandas as pd
 
-LOCAL = False
-
+LOCAL = True
 def get_hist_predict_data(stock_code):
-    recent_data,predict_data = None,None
+    recent_data,predict_data, predict_data_2 = None,None, None
     # company = models.Company.objects.get(stock_code=stock_code)
     company = get_object_or_404(Company, stock_code=stock_code)
     if company.historydata_set.count() <= 0:
@@ -54,7 +53,10 @@ def get_hist_predict_data(stock_code):
             predict_data = single.get_data()
             break
 
-    return recent_data,predict_data
+    #底下是額外加的
+    predict_data_2 =run.prediction(stock_code, pre_len=10, past =True)
+
+    return recent_data,predict_data, predict_data_2
 
 def get_crawl_save_data():
     """
@@ -87,16 +89,16 @@ def get_stock_index(stock_code):
 
 
 def home(request):
-    recent_data,predict_data = get_hist_predict_data("1101")
-    data = {"recent_data":recent_data,"stock_code":"1101","predict_data":predict_data}
+    recent_data,predict_data, predict_data_2 = get_hist_predict_data("1101")
+    data = {"recent_data":recent_data,"stock_code":"1101","predict_data":predict_data, "predict_data_2":predict_data_2}
     data['indexs'] = get_stock_index("1101")
     return render(request,"stock_predict/home.html",{"data":json.dumps(data)}) # json.dumps(list)
 
 def predict_stock_action(request):
     stock_code = request.POST.get('stock_code',None)
     # print("stock_code:\n",stock_code)
-    recent_data, predict_data = get_hist_predict_data(stock_code)
-    data = {"recent_data": recent_data, "stock_code": stock_code, "predict_data": predict_data}
+    recent_data, predict_data, predict_data_2 = get_hist_predict_data(stock_code)
+    data = {"recent_data": recent_data, "stock_code": stock_code, "predict_data": predict_data, "predict_data_2":predict_data_2}
     data['indexs'] = get_stock_index(stock_code)
     return render(request, "stock_predict/home.html", {"data": json.dumps(data)})  # json.dumps(list)
 

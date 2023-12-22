@@ -12,6 +12,9 @@ class DataLoader():
 		cols:选择data的一列或者多列进行分析，如 Close 和 Volume
 		'''
 		dataframe = pd.read_csv(filename)
+		self.filename = filename
+		self.split = split
+		self.cols = cols
 		i_split = int(len(dataframe) * split)
 		self.data_train = dataframe.get(cols).values[:i_split]		#选择指定的列 进行分割 得到 未处理的训练数据
 		self.data_test  = dataframe.get(cols).values[i_split:]
@@ -20,23 +23,26 @@ class DataLoader():
 		self.len_train_windows = None
 
 
-	def get_test_data(self, seq_len, normalise):
+	def get_test_data(self, seq_len, normalise, past = False):
 		'''
 		Create x, y test data windows
 		Warning: batch method, not generative, make sure you have enough memory to
 		load data, otherwise reduce size of the training split.
 		'''
+		#這個if為額外增加的
+		if past:
+			dataframe = pd.read_csv(self.filename)[:-30]
+			i_split = int(len(dataframe) * self.split)
+			self.data_test  = dataframe.get(self.cols).values[i_split:]
+			self.len_test   = len(self.data_test)
 		data_windows = []
 		for i in range(self.len_test - seq_len):
-			
 			data_windows.append(self.data_test[i:i+seq_len])	#每一个元素是长度为seq_len的 list即一个window
 
 		data_windows = np.array(data_windows).astype(float)
 		data_windows = self.normalise_windows(data_windows, single_window=False) if normalise else data_windows
-		
 		x = data_windows[:, :-1]
 		y = data_windows[:, -1, [0]]
-
 		return x, y
 
 	def get_train_data(self, seq_len, normalise):

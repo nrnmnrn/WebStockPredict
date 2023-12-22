@@ -103,7 +103,7 @@ def train_model(stock_code, predict=False):  # 训练指定股票代码的模型
         # plot_results_multiple(predictions, y_test, configs['data']['sequence_length'])
 
 # 对指定公司的股票进行预测
-def prediction(stock_code, real=True, pre_len=30, plot=False):
+def prediction(stock_code, real=True, pre_len=30, plot=False, past = False):
     '''
     使用保存的模型，对输入数据进行预测
     '''
@@ -114,7 +114,6 @@ def prediction(stock_code, real=True, pre_len=30, plot=False):
         configs['data']['train_test_split'],
         configs['data']['columns']
     )
-
     file_path = os.path.join(get_parent_dir(),os.path.join("saved_models","total.h5")) #
     model = Model()
     keras.backend.clear_session()
@@ -126,10 +125,10 @@ def prediction(stock_code, real=True, pre_len=30, plot=False):
         win_position = -1
     else:  # 用指定位置的一个窗口数据进行预测，有对比真实数据（用于绘图对比）
         win_position = -configs['data']['sequence_length']
-
     x_test, y_test = data.get_test_data(
         seq_len=configs['data']['sequence_length'],
-        normalise=False
+        normalise=False,
+        past = past #額外加的past
     )
 
     x_test = x_test[win_position]
@@ -142,11 +141,11 @@ def prediction(stock_code, real=True, pre_len=30, plot=False):
 
     x_test, y_test = data.get_test_data(
         seq_len=configs['data']['sequence_length'],
-        normalise=configs['data']['normalise']
+        normalise=configs['data']['normalise'],
+        past = past
     )
     x_test = x_test[win_position]
     x_test = x_test[np.newaxis, :, :]
-
     # predictions = model.predict_sequences_multiple(x_test, configs['data']['sequence_length'],
     #                                                predict_length)
 
