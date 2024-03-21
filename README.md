@@ -51,7 +51,7 @@ Starting development server at http://127.0.0.1:8000/
 Quit the server with CTRL-BREAK.
 ```
 此时在浏览器中输入：`http://127.0.0.1:8000/stock_predict/home/`即可访问应用，通过下拉框选择查看某个公司过去20天的历史股票数据和未来10天的预测数据。
-![home page](/display_img/home.png "股票预测系统首页")
+![home page](/display_img/home.JPG "股票预测系统首页")
 
 **注：在Web app中绘制的10天预测数据，大多都是朝着一个方向变化。这是因为股票数据是一个随机过程，无法使用既有的模型去准确预测未来一段时间的数据，只能给出股票未来变化的趋势。
 在我们使用[jaungiers](https://www.altumintelligence.com/articles/a/Time-Series-Prediction-Using-LSTM-Deep-Neural-Networks)提出的模型中他详细阐述了这个问题。
